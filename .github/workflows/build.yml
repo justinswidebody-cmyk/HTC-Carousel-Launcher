@@ -23,19 +23,25 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android 16 SDK
+      - name: Install Android SDK
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Set up Gradle 8.13
+      - name: Extract launcher project
+        run: |
+          mkdir launcher
+          unzip HTC_Carousel_Launcher_v0.1.zip -d launcher
+
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: "8.13"
 
       - name: Build debug APK
+        working-directory: launcher
         run: gradle :app:assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: HTC-Carousel-Launcher
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: launcher/app/build/outputs/apk/debug/app-debug.apk
